@@ -1,0 +1,5 @@
+{
+    "name": "TP-Link Archer C50",
+    "domains": ["tplink_c50"],
+    "homeassistant": "0.114.0"
+}

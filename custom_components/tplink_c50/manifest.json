@@ -1,0 +1,8 @@
+{
+    "domain": "tplink_router",
+    "name": "TP-Link C50",
+    "documentation": "https://github.com/menahishayan/Home-Assistant-TP-Link-Router",
+    "dependencies": ["aiohttp","requests"],
+    "codeowners": ["@menahishayan"],
+    "requirements": ["aiohttp>=3.6.2","requests>=2.22.0"]
+  }
