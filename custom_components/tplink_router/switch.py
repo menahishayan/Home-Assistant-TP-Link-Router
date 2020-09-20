@@ -16,7 +16,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 async def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
     switches = [TPLinkPower(config)]
-    async_add_entities(switches, True)
+    async_add_entities(TPLinkPower(config), True)
 
 def get_scanner(hass, config):
     router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD])
