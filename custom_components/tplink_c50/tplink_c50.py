@@ -1,60 +1,75 @@
-from aiohttp.hdrs import (COOKIE, REFERER)
-import base64
-import requests
-import json
+import tplinkrouter
+import logging
+import voluptuous as vol
+from homeassistant.components.device_tracker import ( DOMAIN, PLATFORM_SCHEMA, DeviceScanner )
+from homeassistant.components.switch import SwitchEntity
+from homeassistant.const import ( CONF_HOST, CONF_PASSWORD, CONF_USERNAME, HTTP_HEADER_X_REQUESTED_WITH)
+import homeassistant.helpers.config_validation as cv
 
-hostname = '192.168.0.1'
-username = 'admin'
-password = 'alphatango'
+_LOGGER = logging.getLogger(__name__)
 
-def get_base64_cookie_string():
-    username_password = '{}:{}'.format(username, password)
-    b64_encoded_username_password = base64.b64encode(
-        username_password.encode('ascii')
-    ).decode('ascii')
-    return 'Authorization=Basic {}'.format(b64_encoded_username_password)
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_HOST): cv.string,
+    vol.Required(CONF_USERNAME): cv.string,
+    vol.Required(CONF_PASSWORD): cv.string
+})
 
-def req_parse(body):
-    bodyStr = ''
-    for b in body:
-        bodyStr += b + '\r\n'
-    return bodyStr
+async def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
+    switches = [TPLinkPower(config)]
+    async_add_entities(switches, True)
 
-def res_parse(res):
-    items = {}
-    key = '0'
-    for b in res.splitlines():
-        if b[0] == '[' and 'error' not in b:
-            key = b
-            items[key] = {}
-        if '=' in b:
-            items[key][b[0:b.index('=')]] = b[b.index('=')+1:]
+def get_scanner(hass, config):
+    router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD])
+    
+    devices = []
+    for d in router._get('dhcp_clients').values():
+        devices.append(d)
 
-    return items
+    return devices
 
-cookie = get_base64_cookie_string()
-referer = 'http://{}'.format(hostname)
+class TPLinkPower(SwitchEntity):
+    def __init__(self, config):
+        self._unique_id = 'tplink_c50_power'
+        self._name = 'TP-Link C50 Power'
+        self.router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD])
 
-with open('params.json') as f:
-  ref = json.load(f)
+    @property
+    def unique_id(self):
+        return self._unique_id
 
-def get(item):
-    items = {}
-    for i in ref['get'][item]:
-        page = requests.post(
-            'http://{}/cgi?{}'.format(hostname,i['path']),
-            headers={REFERER: referer, COOKIE: cookie},
-            data=(req_parse(i['body'])),
-            timeout=4)
-            
-        if page.status_code == 200:
-            items = { **items, **res_parse(page.text) }
+    @property
+    def state(self):
+        if self.router._get('version'):
+            return 'on'
         else:
-            print(page.status_code)
-    return items
+            return 'off'
 
-# for d in get('wlan').values():
-#     print(d['SSID'])
-#     print(d['X_TP_PreSharedKey'])
+    @property
+    def is_on(self):
+        return self.router._get('version')
 
-# get('restart')
+    @property
+    def is_off(self):
+        return self.router._get('version')
+
+    def turn_on(self, **kwargs):
+        _LOGGER.debug('on')
+        self.router._get('version')
+
+    def turn_off(self, **kwargs):
+        _LOGGER.debug('off')
+        self.router._get('restart')
+
+    @property
+    def device_state_attributes(self):
+        attrs = {
+            'friendly_name': self._name,
+            'unique_id': self._unique_id,
+        }
+        return attrs
+
+    def _activate(self, on_off):
+        _LOGGER.debug('toggle')
+        self.router._get('restart')
+        self.async_schedule_update_ha_state()
+    
