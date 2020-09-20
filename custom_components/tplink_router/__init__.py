@@ -2,11 +2,11 @@
 
 import logging
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = 'momentary'
+DOMAIN = 'tplink_router'
 
 def setup(_hass, _config):
     _LOGGER.debug('setup')
