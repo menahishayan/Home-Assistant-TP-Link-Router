@@ -1,6 +1,6 @@
 {
     "name": "TP-Link Archer C50",
-    "domains": ["sensor","binary_sensor","switch","device_tracker"],
+    "domains": ["sensor","switch","device_tracker"],
     "homeassistant": "0.114.0",
     "render_readme": true,
     "iot_class": "Local Push"
