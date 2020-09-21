@@ -19,6 +19,8 @@ def get_scanner(hass, config):
 class TPLinkDeviceTracker(DeviceScanner):
     def __init__(self,config):
         self.router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD])
+        self._unique_id = self.router.__name__.lower().replace(' ','_') + '_device_tracker'
+        self._name = self.router.__name__ + ' Device Tracker'
         self.devices = {}
 
     def scan_devices(self):
@@ -27,10 +29,21 @@ class TPLinkDeviceTracker(DeviceScanner):
         return macs
 
     def get_device_name(self, device):
-        try:
+        if device in self.devices:
             return self.devices[device]['hostName']
-        except:
+        else:
+            return device
+
+    def get_extra_attributes(self, device):
+        if device in self.devices:
+            return {
+                'host_name': self.devices[device]['hostName'],
+                'mac_address': device,
+                'ip_address': self.devices[device]['IPAddress'],
+            }
+        else:
             return None
+
 
 
             
