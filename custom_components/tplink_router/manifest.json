@@ -4,5 +4,5 @@
     "documentation": "https://github.com/menahishayan/Home-Assistant-TP-Link-Router",
     "dependencies": [],
     "codeowners": ["@menahishayan"],
-    "requirements": ["tplinkrouter>=0.3.1"]
+    "requirements": ["tplinkrouter>=0.3.1","requests>=2.24.0"]
   }
