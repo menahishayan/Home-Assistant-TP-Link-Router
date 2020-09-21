@@ -18,7 +18,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
+async def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
     router = tplinkrouter.C50(config.get(CONF_HOST),config.get(CONF_USERNAME),config.get(CONF_PASSWORD))
     switches = [
         TPLinkPower(router),
@@ -62,7 +62,6 @@ class TPLinkPower(SwitchEntity):
 
     @property
     def device_state_attributes(self):
-        self.router.logout()
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -105,7 +104,6 @@ class TPLink24Band(SwitchEntity):
 
     @property
     def device_state_attributes(self):
-        self.router.logout()
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -148,7 +146,6 @@ class TPLink5Band(SwitchEntity):
 
     @property
     def device_state_attributes(self):
-        self.router.logout()
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -189,7 +186,6 @@ class TPLinkWAN(SwitchEntity):
 
     @property
     def device_state_attributes(self):
-        self.router.logout()
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
