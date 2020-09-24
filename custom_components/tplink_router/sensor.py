@@ -16,7 +16,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 async def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
-    router = tplinkrouter.C50(config.get(CONF_HOST),config.get(CONF_USERNAME),config.get(CONF_PASSWORD))
+    router = tplinkrouter.C50(config.get(CONF_HOST),config.get(CONF_USERNAME),config.get(CONF_PASSWORD),_LOGGER)
     sensors = []
     for d in router.get_clients().values():
         sensors.append(TPLinkClient(router,d))
@@ -24,7 +24,7 @@ async def async_setup_platform(_hass, config, async_add_entities, _discovery_inf
 
 class TPLinkClient(Entity):
     """TP-Link Router Client Sensor"""
-    def __init__(self, router,device):
+    async def __init__(self, router,device):
         self.router = router
         self.device = device
         self._unique_id = device['hostName'].lower().replace('-','_') + '_ip'
@@ -33,27 +33,27 @@ class TPLinkClient(Entity):
         self._state = 'Not Connected'
        
     @property
-    def unique_id(self):
+    async def unique_id(self):
         return self._unique_id
 
     @property
-    def name(self):
+    async def name(self):
         """Return the name of the sensor."""
         return self._name
 
     @property
-    def state(self):
+    async def state(self):
         return self._state
 
-    def update(self):
+    async def update(self):
         try:
-            clients = self.router.get_clients()
+            clients = await self.router.get_clients()
             self._state = clients[self.device['hostName']]['IPAddress']
         except:
             self._state = 'Not Connected'
 
     @property
-    def device_state_attributes(self):
+    async def device_state_attributes(self):
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,

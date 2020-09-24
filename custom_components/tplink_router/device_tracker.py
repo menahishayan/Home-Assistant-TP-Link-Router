@@ -13,28 +13,28 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-def get_scanner(hass, config):
+def async_get_scanner(hass, config):
     return TPLinkDeviceTracker(config)
 
 class TPLinkDeviceTracker(DeviceScanner):
-    def __init__(self,config):
-        self.router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD])
+    async def __init__(self,config):
+        self.router = tplinkrouter.C50(config[DOMAIN][CONF_HOST],config[DOMAIN][CONF_USERNAME],config[DOMAIN][CONF_PASSWORD],_LOGGER)
         self._unique_id = self.router.__name__.lower().replace(' ','_') + '_device_tracker'
         self._name = self.router.__name__ + ' Device Tracker'
         self.devices = {}
 
-    def scan_devices(self):
-        self.devices = self.router.get_clients_by_mac()
+    async def scan_devices(self):
+        self.devices = await self.router.get_clients_by_mac()
         macs = [d for d in self.devices]
         return macs
 
-    def get_device_name(self, device):
+    async def get_device_name(self, device):
         if device in self.devices:
             return self.devices[device]['hostName']
         else:
             return device
 
-    def get_extra_attributes(self, device):
+    async def get_extra_attributes(self, device):
         if device in self.devices:
             return {
                 'host_name': self.devices[device]['hostName'],
