@@ -14,7 +14,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PASSWORD): cv.string
 })
 
-async def async_setup_platform(_hass, config, async_add_entities, _discovery_info=None):
+def setup_platform(_hass, config, add_entities, _discovery_info=None):
     router = tplinkrouter.C50(config.get(CONF_HOST),config.get(CONF_USERNAME),config.get(CONF_PASSWORD),_LOGGER)
     switches = [
         TPLinkPower(router,_hass),
@@ -22,11 +22,11 @@ async def async_setup_platform(_hass, config, async_add_entities, _discovery_inf
         TPLink5Band(router,_hass),
         TPLinkWAN(router,_hass)
     ]
-    async_add_entities(switches)
+    add_entities(switches)
 
 class TPLinkPower(SwitchEntity):
     """TP-Link Router Power Switch"""
-    async def __init__(self, router,hass):
+    def __init__(self, router,hass):
         self.router = router
         self._unique_id = router.__name__.lower().replace(" ", "_")
         self._name = router.__name__
@@ -35,22 +35,22 @@ class TPLinkPower(SwitchEntity):
         self.hass = hass
 
     @property
-    async def unique_id(self):
+    def unique_id(self):
         return self._unique_id
 
     @property
     async def state(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return 'on' if self._state else 'off'
 
     @property
     async def is_on(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return self._state
 
     @property
     async def is_off(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return not self._state
 
     async def update(self):
@@ -64,7 +64,7 @@ class TPLinkPower(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    async def device_state_attributes(self):
+    def device_state_attributes(self):
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -73,30 +73,31 @@ class TPLinkPower(SwitchEntity):
     
 class TPLink24Band(SwitchEntity):
     """TP-Link Router 2.4GHz Switch"""
-    async def __init__(self, router):
+    def __init__(self, router,hass):
         self.router = router
         self._unique_id = router.__name__.lower().replace(" ", "_") + '_24ghz'
         self._name = router.__name__ + ' 2.4GHz'
         self._icon = 'mdi:wifi'
         self._state = False
+        self.hass = hass
 
     @property
-    async def unique_id(self):
+    def unique_id(self):
         return self._unique_id
 
     @property
     async def state(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return 'on' if self._state else 'off'
 
     @property
     async def is_on(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return self._state
 
     @property
     async def is_off(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return not self._state
 
     async def update(self):
@@ -113,7 +114,7 @@ class TPLink24Band(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    async def device_state_attributes(self):
+    def device_state_attributes(self):
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -122,30 +123,31 @@ class TPLink24Band(SwitchEntity):
     
 class TPLink5Band(SwitchEntity):
     """TP-Link Router 5GHz Switch"""
-    async def __init__(self, router):
+    def __init__(self, router,hass):
         self.router = router
         self._unique_id = router.__name__.lower().replace(" ", "_") + '_5ghz'
         self._name = router.__name__ + ' 5GHz'
         self._icon = 'mdi:wifi'
         self._state = False
+        self.hass = hass
 
     @property
-    async def unique_id(self):
+    def unique_id(self):
         return self._unique_id
 
     @property
     async def state(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return 'on' if self._state else 'off'
 
     @property
     async def is_on(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return self._state
 
     @property
     async def is_off(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return not self._state
 
     async def update(self):
@@ -162,7 +164,7 @@ class TPLink5Band(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    async def device_state_attributes(self):
+    def device_state_attributes(self):
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
@@ -171,30 +173,31 @@ class TPLink5Band(SwitchEntity):
     
 class TPLinkWAN(SwitchEntity):
     """TP-Link WAN Connection Switch"""
-    async def __init__(self, router):
+    def __init__(self, router,hass):
         self.router = router
         self._unique_id = router.__name__.lower().replace(" ", "_") + '_wan'
         self._name = router.__name__ + ' WAN'
         self._icon = 'mdi:wan'
         self._state = False
+        self.hass = hass
 
     @property
-    async def unique_id(self):
+    def unique_id(self):
         return self._unique_id
 
     @property
     async def state(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return 'on' if self._state else 'off'
 
     @property
     async def is_on(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return self._state
 
     @property
     async def is_off(self):
-        await self.hass.async_add_executor_job(self.update)
+        await self.hass.loop.create_task(self.update)
         return not self._state
 
     async def update(self):
@@ -209,7 +212,7 @@ class TPLinkWAN(SwitchEntity):
         self.async_schedule_update_ha_state()
 
     @property
-    async def device_state_attributes(self):
+    def device_state_attributes(self):
         return {
             'friendly_name': self._name,
             'unique_id': self._unique_id,
