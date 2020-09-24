@@ -24,21 +24,19 @@ class TPLinkDeviceTracker(DeviceScanner):
         self.devices = {}
         self.hass = hass
 
-    def scan_devices(self):
-        self.hass.loop.create_task(self.async_device_scanner)
+    async def async_scan_devices(self):
+        # self.hass.loop.create_task(self.async_device_scanner)
+        self.devices = await self.hass.async_add_executor_job(self.router.get_clients_by_mac)
         macs = [d for d in self.devices]
         return macs
 
-    async def async_device_scanner(self):
-        self.devices = self.router.get_clients_by_mac()
-        
-    async def get_device_name(self, device):
+    def get_device_name(self, device):
         if device in self.devices:
             return self.devices[device]['hostName']
         else:
             return device
 
-    async def get_extra_attributes(self, device):
+    def get_extra_attributes(self, device):
         if device in self.devices:
             return {
                 'host_name': self.devices[device]['hostName'],

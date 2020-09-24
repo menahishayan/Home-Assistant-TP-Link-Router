@@ -39,28 +39,28 @@ class TPLinkPower(SwitchEntity):
         return self._unique_id
 
     @property
-    async def state(self):
-        await self.hass.loop.create_task(self.update)
+    def state(self):
+        self.hass.async_create_task(self.update())
         return 'on' if self._state else 'off'
 
     @property
-    async def is_on(self):
-        await self.hass.loop.create_task(self.update)
+    def is_on(self):
+        self.hass.async_create_task(self.update())
         return self._state
 
     @property
-    async def is_off(self):
-        await self.hass.loop.create_task(self.update)
+    def is_off(self):
+        self.hass.async_create_task(self.update())
         return not self._state
 
     async def update(self):
-        self._state = await self.router.is_on()
+        self._state = await self.hass.async_add_executor_job(self.router.is_on)
 
-    async def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         self.async_schedule_update_ha_state()
 
-    async def turn_off(self, **kwargs):
-        await self.router.restart()
+    async def async_turn_off(self, **kwargs):
+        self.hass.async_add_executor_job(self.router.restart)
         self.async_schedule_update_ha_state()
 
     @property
@@ -86,30 +86,34 @@ class TPLink24Band(SwitchEntity):
         return self._unique_id
 
     @property
-    async def state(self):
-        await self.hass.loop.create_task(self.update)
+    def state(self):
+        self.hass.async_create_task(self.async_update())
         return 'on' if self._state else 'off'
 
     @property
-    async def is_on(self):
-        await self.hass.loop.create_task(self.update)
+    def is_on(self):
+        self.hass.async_create_task(self.async_update())
         return self._state
 
     @property
-    async def is_off(self):
-        await self.hass.loop.create_task(self.update)
+    def is_off(self):
+        self.hass.async_create_task(self.async_update())
         return not self._state
 
-    async def update(self):
-        self._state = await self.router._get('bands')['[1,1,0,0,0,0]0']['enable'] == '1'
+    async def async_update(self):
+        result = await self.hass.async_add_executor_job(self._update)
+        self._state = result['[1,1,0,0,0,0]0']['enable'] == '1'
 
-    async def turn_on(self, **kwargs):
-        await self.router.set_band('2.4GHz',True)
+    def _update(self):
+        return self.router._get('bands')
+
+    async def async_turn_on(self, **kwargs):
+        self.router.set_band('2.4GHz',True)
         self._icon = 'mdi:wifi'
         self.async_schedule_update_ha_state()
 
-    async def turn_off(self, **kwargs):
-        await self.router.set_band('2.4GHz',False)
+    async def async_turn_off(self, **kwargs):
+        self.router.set_band('2.4GHz',False)
         self._icon = 'mdi:wifi-off'
         self.async_schedule_update_ha_state()
 
@@ -136,30 +140,34 @@ class TPLink5Band(SwitchEntity):
         return self._unique_id
 
     @property
-    async def state(self):
-        await self.hass.loop.create_task(self.update)
+    def state(self):
+        self.hass.async_create_task(self.async_update())
         return 'on' if self._state else 'off'
 
     @property
-    async def is_on(self):
-        await self.hass.loop.create_task(self.update)
+    def is_on(self):
+        self.hass.async_create_task(self.async_update())
         return self._state
 
     @property
-    async def is_off(self):
-        await self.hass.loop.create_task(self.update)
+    def is_off(self):
+        self.hass.async_create_task(self.async_update())
         return not self._state
 
-    async def update(self):
-        self._state = await self.router._get('bands')['[1,2,0,0,0,0]0']['enable'] == '1'
+    async def async_update(self):
+        result = await self.hass.async_add_executor_job(self._update)
+        self._state = result['[1,2,0,0,0,0]0']['enable'] == '1'
 
-    async def turn_on(self, **kwargs):
-        await self.router.set_band('5GHz',True)
+    def _update(self):
+        return self.router._get('bands')
+
+    async def async_turn_on(self, **kwargs):
+        self.router.set_band('5GHz',True)
         self._icon = 'mdi:wifi'
         self.async_schedule_update_ha_state()
 
-    async def turn_off(self, **kwargs):
-        await self.router.set_band('5GHz',False)
+    async def async_turn_off(self, **kwargs):
+        self.router.set_band('5GHz',False)
         self._icon = 'mdi:wifi-off'
         self.async_schedule_update_ha_state()
 
@@ -186,29 +194,33 @@ class TPLinkWAN(SwitchEntity):
         return self._unique_id
 
     @property
-    async def state(self):
-        await self.hass.loop.create_task(self.update)
+    def state(self):
+        self.hass.async_create_task(self.async_update())
         return 'on' if self._state else 'off'
 
     @property
-    async def is_on(self):
-        await self.hass.loop.create_task(self.update)
+    def is_on(self):
+        self.hass.async_create_task(self.async_update())
         return self._state
 
     @property
-    async def is_off(self):
-        await self.hass.loop.create_task(self.update)
+    def is_off(self):
+        self.hass.async_create_task(self.async_update())
         return not self._state
 
-    async def update(self):
-        self._state = await self.router._get('wan')['[1,1,1,0,0,0]0']['connectionStatus'] == 'Connected'
+    async def async_update(self):
+        result = await self.hass.async_add_executor_job(self._update)
+        self._state = result['[1,1,1,0,0,0]0']['connectionStatus'] == 'Connected'
 
-    async def turn_on(self, **kwargs):
-        await self.router._set('wan', [{}, {'[WAN_PPP_CONN#1,1,1,0,0,0#0,0,0,0,0,0]1,19': {'enable': '1'}}, {}])
+    def _update(self):
+        return self.router._get('wan')
+
+    async def async_turn_on(self, **kwargs):
+        self.router._set('wan', [{}, {'[WAN_PPP_CONN#1,1,1,0,0,0#0,0,0,0,0,0]1,19': {'enable': '1'}}, {}])
         self.async_schedule_update_ha_state()
 
-    async def turn_off(self, **kwargs):
-        await self.router._set('wan', [{}, {'[WAN_PPP_CONN#1,1,1,0,0,0#0,0,0,0,0,0]1,19': {'enable': '0'}}])
+    async def async_turn_off(self, **kwargs):
+        self.router._set('wan', [{}, {'[WAN_PPP_CONN#1,1,1,0,0,0#0,0,0,0,0,0]1,19': {'enable': '0'}}])
         self.async_schedule_update_ha_state()
 
     @property
