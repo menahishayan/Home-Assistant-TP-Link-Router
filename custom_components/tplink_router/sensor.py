@@ -19,18 +19,19 @@ def setup_platform(_hass, config, add_entities, _discovery_info=None):
     router = tplinkrouter.C50(config.get(CONF_HOST),config.get(CONF_USERNAME),config.get(CONF_PASSWORD),_LOGGER)
     sensors = []
     for d in router.get_clients().values():
-        sensors.append(TPLinkClient(router,d))
+        sensors.append(TPLinkClient(router,d,_hass))
     add_entities(sensors)
 
 class TPLinkClient(Entity):
     """TP-Link Router Client Sensor"""
-    def __init__(self, router,device):
+    def __init__(self, router,device,hass):
         self.router = router
         self.device = device
         self._unique_id = device['hostName'].lower().replace('-','_') + '_ip'
         self._name = device['hostName']
         self._icon = 'mdi:devices'
         self._state = 'Not Connected'
+        self.hass = hass
        
     @property
     def unique_id(self):
@@ -45,9 +46,9 @@ class TPLinkClient(Entity):
     def state(self):
         return self._state
 
-    async def update(self):
+    async def async_update(self):
         try:
-            clients = await self.router.get_clients()
+            clients = await self.hass.async_add_executor_job(self.router.get_clients)
             self._state = clients[self.device['hostName']]['IPAddress']
         except:
             self._state = 'Not Connected'
