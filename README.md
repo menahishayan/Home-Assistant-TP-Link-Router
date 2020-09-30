@@ -1,7 +1,7 @@
 # Home Assistant TP Link Router
  Home Assistant component for complete router administration of the TP Link Archer C50 and the TP Link N600 based on the [TP-Link Router API](https://github.com/menahishayan/TP-Link-Archer-C50-API.git)
 
-**v1.0.0**
+**v1.0.1**
 
 ## Installation
 
@@ -85,5 +85,7 @@ This integration is merely a Home Assistant interface for the [TP-Link Router AP
 For improvements in how this integration actually interfaces the API with Home Assisant's developer modules, you may make a pull request here.
 
 ## Changelog
+### v1.0.1
+ - Fix Github incorrect release
 ### v1.0.0
  - First Production Release
