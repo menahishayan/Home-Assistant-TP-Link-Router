@@ -68,10 +68,13 @@ device_tracker:
 
 ### Device Tracker
  - Track clients by MAC address across 2.4Ghz, 5Ghz and LAN
+ 
+## Adding Support For More Models
+Head over to [CONTRIBUTING.md](https://github.com/menahishayan/TP-Link-Archer-C50-API/blob/master/CONTRIBUTING.md)
 
 ## Troubleshooting/Error Reporting/Contributing
  - If you face an error, you may debug using a HTTP Requests tool/monitor on your router's configuration webpage. Additionally, you may open a new issue on this repo prefixed by [Bug]
- - If you would like to help improve the package, request features or add support for more models, open an issue prefixed by [Feature Request] or [Improvement]
+ - If you would like to help improve the package, request features or add features, open an issue prefixed by [Feature Request] or [Improvement]
 
 ## PRs and Commit Template
 PRs and commits that you make to this repo must include the following:  
