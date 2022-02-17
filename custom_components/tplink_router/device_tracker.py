@@ -351,6 +351,18 @@ class C7TplinkDeviceScanner(TplinkDeviceScanner):
         self.token = ''
         super(C7TplinkDeviceScanner, self).__init__(config)
 
+    def _log_out(self):
+        _LOGGER.info("Logging out of router admin interface...")
+        url = 'http://{}/{}/userRpm/LogoutRpm.htm'.format(self.host, self.token)
+        referer = 'http://{}'.format(self.host)
+        cookie = 'Authorization=Basic {}'.format(self.credentials)
+
+        page = requests.get(url, headers={
+            COOKIE: cookie,
+             REFERER: referer,
+        })       
+        self.token = ''
+
     def _get_auth_tokens(self):
         """Retrieve auth tokens from the router."""
         _LOGGER.info("Retrieving auth tokens...")
@@ -410,23 +422,11 @@ class C7TplinkDeviceScanner(TplinkDeviceScanner):
         self._log_out()
         
         if not mac_results:
-            _LOGGER.info("No Clients.. {}".format(page.text))
             return False
             
         self.last_results = [mac.replace("-", ":") for mac in mac_results]
         return True
         
-    def _Log_out(self):
-        _LOGGER.info("Logging out of router admin interface...")
-        url = 'http://{}/{}/userRpm/LogoutRpm.htm'.format(self.host, self.token)
-        referer = 'http://{}'.format(self.host)
-        cookie = 'Authorization=Basic {}'.format(self.credentials)
-
-        page = requests.get(url, headers={
-            COOKIE: cookie,
-             REFERER: referer,
-        })       
-        self.token = ''
 
 
 class EAP225TplinkDeviceScanner(TplinkDeviceScanner):
