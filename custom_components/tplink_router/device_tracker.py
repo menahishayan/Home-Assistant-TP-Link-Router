@@ -46,14 +46,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 def get_scanner(hass, config):
     """Validate the configuration and return a TP-Link scanner."""
-#    for cls in [VR600TplinkDeviceScanner,
-#                EAP225TplinkDeviceScanner,
-#                N600TplinkDeviceScanner,
-#                C7TplinkDeviceScanner,
-#                C9TplinkDeviceScanner,
-#                OldC9TplinkDeviceScanner,
-#                OriginalTplinkDeviceScanner]:
-    for cls in [C7TplinkDeviceScanner]:
+    for cls in [VR600TplinkDeviceScanner,
+                EAP225TplinkDeviceScanner,
+                N600TplinkDeviceScanner,
+                C7TplinkDeviceScanner,
+                C9TplinkDeviceScanner,
+                OldC9TplinkDeviceScanner,
+                OriginalTplinkDeviceScanner]:
 
         scanner = cls(config[DOMAIN])
         if scanner.success_init:
@@ -408,6 +407,17 @@ class C7TplinkDeviceScanner(TplinkDeviceScanner):
             mac_results.extend(self.parse_macs_hyphens.findall(page.text))
 
         # now logout, otherwise the router is locked
+        self._log_out()
+        
+        if not mac_results:
+            _LOGGER.info("No Clients.. {}".format(page.text))
+            return False
+            
+        self.last_results = [mac.replace("-", ":") for mac in mac_results]
+        return True
+        
+    def _Log_out(self):
+        _LOGGER.info("Logging out of router admin interface...")
         url = 'http://{}/{}/userRpm/LogoutRpm.htm'.format(self.host, self.token)
         referer = 'http://{}'.format(self.host)
         cookie = 'Authorization=Basic {}'.format(self.credentials)
@@ -417,13 +427,6 @@ class C7TplinkDeviceScanner(TplinkDeviceScanner):
              REFERER: referer,
         })       
         self.token = ''
-        
-        if not mac_results:
-            _LOGGER.info("No Clients.. {}".format(page.text))
-            return False
-            
-        self.last_results = [mac.replace("-", ":") for mac in mac_results]
-        return True
 
 
 class EAP225TplinkDeviceScanner(TplinkDeviceScanner):
