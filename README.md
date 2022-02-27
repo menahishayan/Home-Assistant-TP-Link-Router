@@ -92,3 +92,6 @@ For improvements in how this integration actually interfaces the API with Home A
  - Fix Github incorrect release
 ### v1.0.0
  - First Production Release
+### v1.0.1
+ - json file version number added
+ - C7 logs out to prevent lock
