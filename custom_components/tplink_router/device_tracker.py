@@ -446,9 +446,7 @@ class EAP225TplinkDeviceScanner(TplinkDeviceScanner):
         base_url = 'http://{}'.format(self.host)
 
         header = {
-            USER_AGENT:
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12;"
-                " rv:53.0) Gecko/20100101 Firefox/53.0",
+            USER_AGENT: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
             ACCEPT: "application/json, text/javascript, */*; q=0.01",
             ACCEPT_LANGUAGE: "Accept-Language: en-US,en;q=0.5",
             ACCEPT_ENCODING: "gzip, deflate",
