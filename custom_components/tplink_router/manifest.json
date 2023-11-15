@@ -1,7 +1,7 @@
 {
     "domain": "tplink_router",
     "name": "TP-Link C50",
-    "version": "0.0.7",
+    "version": "1.0.3",
     "documentation": "https://github.com/menahishayan/Home-Assistant-TP-Link-Router",
     "dependencies": [],
     "codeowners": ["@menahishayan"],

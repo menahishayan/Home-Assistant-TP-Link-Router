@@ -84,6 +84,9 @@ This integration is merely a Home Assistant interface for the [TP-Link Router AP
 For improvements in how this integration actually interfaces the API with Home Assisant's developer modules, you may make a pull request here.
 
 ## Changelog
+### v1.0.3
+ - Update README for Manual Install changes in HA 2023.x [#14](https://github.com/menahishayan/Home-Assistant-TP-Link-Router/issues/14)
+ - Fix user agent issues [#11](https://github.com/menahishayan/Home-Assistant-TP-Link-Router/issues/11)
 ### v1.0.2
  - json file version number added
  - C7 logs out to prevent lock
