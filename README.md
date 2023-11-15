@@ -1,7 +1,8 @@
 # Home Assistant TP Link Router
  Home Assistant component for complete router administration of the TP Link Archer C50 and the TP Link N600 based on the [TP-Link Router API](https://github.com/menahishayan/TP-Link-Archer-C50-API.git)
 
-**v1.0.1**
+### Looking for Maintainers
+Between full-time work and commitments, I no longer find the time to maintain this project. As a result you'll find a number of open issues. If you're interested to contribute, feel free to open a PR! Until then, this project is stale and likely won't recieve updates.
 
 ## Installation
 
@@ -14,18 +15,13 @@
 
 ### Manual
 
-Clone this repository in your existing (or create it) `custom_components/` folder.
-
+1. Clone this repository
 ```bash
-cd custom_components/
 git clone https://github.com/menahishayan/Home-Assistant-TP-Link-Router.git
 ```
-
-Or using submodules:
-
+2. Move `tplink_router` to `custom_components`
 ```bash
-cd custom_components/
-git submodule add https://github.com/menahishayan/Home-Assistant-TP-Link-Router.git
+mv Home-Assistant-TP-Link-Router/custom_components/tplink_router <HA_ROOT>/custom_components/
 ```
 
 ### Setup
@@ -88,10 +84,14 @@ This integration is merely a Home Assistant interface for the [TP-Link Router AP
 For improvements in how this integration actually interfaces the API with Home Assisant's developer modules, you may make a pull request here.
 
 ## Changelog
+### v1.0.3
+ - Update README for Manual Install changes in HA 2023.x [#14](https://github.com/menahishayan/Home-Assistant-TP-Link-Router/issues/14)
+ - Fix user agent issues [#11](https://github.com/menahishayan/Home-Assistant-TP-Link-Router/issues/11)
+### v1.0.2
+ - json file version number added
+ - C7 logs out to prevent lock
 ### v1.0.1
  - Fix Github incorrect release
 ### v1.0.0
  - First Production Release
-### v1.0.1
- - json file version number added
- - C7 logs out to prevent lock
+
